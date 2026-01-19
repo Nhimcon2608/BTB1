@@ -57,44 +57,53 @@ public class Main {
                     listBook.forEach(p -> p.output());
                 }
                 case 5 -> {
-                    // Tìm sách có tựa đề chứa "Lập trình" (không phân biệt hoa thường)
+                    // Tìm sách theo từ khóa trong tựa đề (không phân biệt hoa thường)
+                    System.out.print("Nhập từ khóa tìm kiếm: ");
+                    x.nextLine(); // clear buffer
+                    String keyword = x.nextLine().toLowerCase();
+                    
                     List<Book> list5 = listBook.stream()
-                            .filter(u -> u.getTitle().toLowerCase().contains("lập trình"))
+                            .filter(u -> u.getTitle().toLowerCase().contains(keyword))
                             .toList();
-                    System.out.println("Sách có tựa đề chứa 'Lập trình':");
+                    System.out.println("Kết quả tìm kiếm:");
                     list5.forEach(Book::output);
                 }
                 case 6 -> {
-                    // Lấy tối đa K cuốn sách có giá <= P
-                    System.out.print("Nhập số lượng sách tối đa (K): ");
-                    int k = x.nextInt();
-                    System.out.print("Nhập giá tối đa (P): ");
+                    // Hiển thị sách có giá <= giá nhập vào
+                    System.out.print("Nhập giá sách tối đa: ");
                     double p = x.nextDouble();
                     
                     List<Book> list6 = listBook.stream()
                             .filter(book -> book.getPrice() <= p)
-                            .limit(k)
                             .toList();
-                    System.out.println("Danh sách sách thỏa mãn:");
+                    System.out.println("Danh sách sách có giá <= " + p + ":");
                     list6.forEach(Book::output);
                 }
                 case 7 -> {
-                    // Tìm sách theo danh sách tác giả
-                    System.out.print("Nhập số lượng tác giả cần tìm: ");
-                    int n = x.nextInt();
-                    x.nextLine(); // clear buffer
+                    // Hiển thị danh sách tác giả và chọn tác giả để xem sách
+                    Set<String> authorSet = listBook.stream()
+                            .map(Book::getAuthor)
+                            .collect(Collectors.toSet());
                     
-                    Set<String> authorSet = new HashSet<>();
-                    for (int i = 0; i < n; i++) {
-                        System.out.print("Nhập tên tác giả " + (i + 1) + ": ");
-                        authorSet.add(x.nextLine().toLowerCase());
+                    System.out.println("Danh sách tác giả:");
+                    List<String> authorList = new ArrayList<>(authorSet);
+                    for (int i = 0; i < authorList.size(); i++) {
+                        System.out.println((i + 1) + ". " + authorList.get(i));
                     }
                     
-                    List<Book> list7 = listBook.stream()
-                            .filter(book -> authorSet.contains(book.getAuthor().toLowerCase()))
-                            .toList();
-                    System.out.println("Sách của các tác giả đã nhập:");
-                    list7.forEach(Book::output);
+                    System.out.print("Chọn số thứ tự tác giả: ");
+                    int choice = x.nextInt();
+                    
+                    if (choice >= 1 && choice <= authorList.size()) {
+                        String selectedAuthor = authorList.get(choice - 1);
+                        List<Book> list7 = listBook.stream()
+                                .filter(book -> book.getAuthor().equals(selectedAuthor))
+                                .toList();
+                        System.out.println("Sách của tác giả " + selectedAuthor + ":");
+                        list7.forEach(Book::output);
+                    } else {
+                        System.out.println("Lựa chọn không hợp lệ!");
+                    }
                 }
                 case 0 -> System.out.println("Tạm biệt!");
                 default -> System.out.println("Chức năng không hợp lệ!");
